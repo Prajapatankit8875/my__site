@@ -23,8 +23,18 @@ def analyze(request):
     removepunc = request.Get.get('removepunc','off')
     print(removepunc)
     print(djtext)
-    #Analyze the text
-    return HttpResponse("remove punc")
+    if removepunc == "on":
+    #analyzed = djtext
+      punctuations = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
+      analyzed = ""
+      for char in djtext:
+         if char not in punctuations:
+               analyzed = analyzed + char
+      params = {'purpose':'Removed Punctuations','analyzed_text':'analyzed'}
+      #Analyze the text
+      return render(request, 'analyze.html',param)
+    else:
+        return HttpResponse("Error")
 
 #def capfirst(request):
    # return HttpResponse("capitalize first")
