@@ -13,8 +13,9 @@ from django.shortcuts import render
 # code for video: 7
 
 def index(request):
-    return render(request, 'index.html')
-    #return HttpResponse("Home")
+   path = "index.html"
+   return render(request, path)
+   # return HttpResponse("Home")
 
 
 def analyze(request):
