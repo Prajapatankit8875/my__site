@@ -1,83 +1,60 @@
-# logic business
-# code for video 6
+
+# I have created this file - Harry
 from django.http import HttpResponse
 from django.shortcuts import render
-#def index(request):
- #   return HttpResponse ('''<h1>Hello Ankit<h1/> <a href="https://www.youtube.com/watch?v=8HDTS80dlr4&list=RD8HDTS80dlr4&start_radio=1">highway song </a>>''')
 
-
-#def about(request):
- #   return HttpResponse ('''About <a href="https://www.sarkariresult.com/"> Govt exam</a>>''')
-  
-
-# code for video: 7
 
 def index(request):
-   path = "index.html"
-   return render(request, path)
-   # return HttpResponse("Home")
+    return render(request, 'index.html')
 
 
 def analyze(request):
     #Get the text
-    djtext = request.GET.get('text', 'default')
+    djtext = request.POST.get('text', 'default')
 
-     # check checkbox values
+    # Check checkbox values
+    removepunc = request.POST.get('removepunc', 'off')
+    fullcaps = request.POST.get('fullcaps', 'off')
+    newlineremover = request.POST.get('newlineremover', 'off')
+    extraspaceremover = request.POST.get('extraspaceremover', 'off')
 
-    removepunc = request.GET.get('removepunc', 'off')
-    fullcaps = request.GET.get('fullcaps', 'off')
-    newlineremover = request.GET.get('newlineremover', 'off')
-    extraspaceremover = request.GET.get('extraspaceremover', 'off')
-
-
-    #check which checkbox is on
+    #Check which checkbox is on
     if removepunc == "on":
-      punctuations = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
-      analyzed = ""
-      for char in djtext:
-         if char not in punctuations:
-               analyzed = analyzed + char
-      params = {'purpose':'Removed Punctuations','analyzed_text':'analyzed'}
+        punctuations = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
+        analyzed = ""
+        for char in djtext:
+            if char not in punctuations:
+                analyzed = analyzed + char
 
-      #Analyze the text
-      return render(request, 'analyze.html',params)
-    
-    elif(fullcaps=="on"):
+        params = {'purpose':'Removed Punctuations', 'analyzed_text': analyzed}
+        djtext = analyzed
+
+    if(fullcaps=="on"):
         analyzed = ""
         for char in djtext:
             analyzed = analyzed + char.upper()
-        params = {'purpose':'change to uppercase','analyzed_text':'analyzed'}
-        return render(request, 'analyze.html',params) 
-    
-    elif(newlineremover=="on"):
-        analyzed = "" 
-        for char in djtext:
-            if char !="\n":
-             analyzed = analyzed + char
-        params = {'purpose':'removed newlines','analyzed_text':'analyzed'}
-        return render(request, 'analyze.html',params) 
-    
-    elif(extraspaceremover=="on"):
-        analyzed = "" 
+
+        params = {'purpose': 'Changed to Uppercase', 'analyzed_text': analyzed}
+        djtext = analyzed
+
+    if(extraspaceremover=="on"):
+        analyzed = ""
         for index, char in enumerate(djtext):
-            if not djtext[index] == " " and djtext[index+1]==" ":
-               analyzed = analyzed + char
-        params = {'purpose':'removed newlines','analyzed_text':'analyzed'}
-        return render(request, 'analyze.html',params) 
-        
- 
-    else:
-        return HttpResponse("Error")
+            if not(djtext[index] == " " and djtext[index+1]==" "):
+                analyzed = analyzed + char
 
-#def capfirst(request):
-   # return HttpResponse("capitalize first")
+        params = {'purpose': 'Removed NewLines', 'analyzed_text': analyzed}
+        djtext = analyzed
 
-#def newlineremove(request):
-   # return HttpResponse("newline remove ")
+    if (newlineremover == "on"):
+        analyzed = ""
+        for char in djtext:
+            if char != "\n" and char!="\r":
+                analyzed = analyzed + char
 
-#def spaceremove(request):
-   # return HttpResponse("space remove  <a href='/'>back</a>")
+        params = {'purpose': 'Removed NewLines', 'analyzed_text': analyzed}
 
-#def charcount(request):
-   # return HttpResponse("char count")
+    if(removepunc != "on" and newlineremover!="on" and extraspaceremover!="on" and fullcaps!="on"):
+        return HttpResponse("please select any operation and try again")
 
+    return render(request, 'analyze.html', params)
